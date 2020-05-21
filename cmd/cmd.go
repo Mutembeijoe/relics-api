@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"github.com/gin-gonic/gin"
@@ -38,7 +38,7 @@ func init() {
 	LogInfo("Contacting DB...")
 	db, err := InitDB()
 
-	app = &application{DB:db}
+	app = &application{DB: db}
 
 	if err != nil {
 		log.Fatalln("Failed to Initiated db", err.Error())
@@ -50,7 +50,7 @@ func init() {
 	SeedDB(app.DB)
 }
 
-func main() {
+func Run() {
 	defer app.DB.Close()
 
 	r := gin.Default()
@@ -62,6 +62,6 @@ func main() {
 	})
 
 	LogInfo("Listening on Port : ", port)
-	log.Fatalln(r.Run(":"+port))
+	log.Fatalln(r.Run(":" + port))
 
 }
