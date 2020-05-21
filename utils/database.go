@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/mutembeijoe/smartshop_api/postgres"
 	"os"
 )
 
@@ -34,4 +35,13 @@ func InitDB() (*gorm.DB, error) {
 	LogInfo("Connected to DB....")
 
 	return db, nil
+}
+
+
+func AutoMigrate(db *gorm.DB){
+	if autoMigrate:= os.Getenv("AUTOMIGRATE"); autoMigrate=="true"{
+		LogInfo("Running Auto Migration to create DATABASE TABLES")
+		db.AutoMigrate(&postgres.Category{}, &postgres.Product{})
+		LogInfo("Finished Running Auto Migration")
+	}
 }

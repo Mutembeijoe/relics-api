@@ -15,7 +15,7 @@ type application struct {
 }
 
 var (
-	app  application
+	app  *application
 	port string
 )
 
@@ -30,7 +30,6 @@ func init() {
 	InitLogger()
 
 	//Get Port Number
-
 	if port = os.Getenv("PORT_NUMBER"); port == "" {
 		port = "8001"
 	}
@@ -39,12 +38,13 @@ func init() {
 	LogInfo("Contacting DB...")
 	db, err := InitDB()
 
-	app.DB = db
+	app = &application{DB:db}
 
 	if err != nil {
 		log.Fatalln("Failed to Initiated db", err.Error())
 	}
-
+	//AutoMigrate DB
+	AutoMigrate(app.DB)
 }
 
 func main() {
