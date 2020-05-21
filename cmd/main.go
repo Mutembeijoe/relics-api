@@ -14,10 +14,16 @@ type application struct {
 var app application
 
 func init() {
+	//Load .env variables
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalln("Failed to load .env file")
 	}
+	//	Init Logger
+
+	utils.InitLogger()
+
+	//Init DB
 	db, err := utils.InitDB()
 
 	app.DB = db
@@ -25,6 +31,7 @@ func init() {
 	if err != nil {
 		log.Fatalln("Failed to Initiated db", err.Error())
 	}
+
 }
 
 func main() {
