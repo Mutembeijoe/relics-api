@@ -6,7 +6,6 @@ import (
 	"github.com/joho/godotenv"
 	. "github.com/mutembeijoe/smartshop_api/utils"
 	"log"
-	"net/http"
 	"os"
 )
 
@@ -17,6 +16,7 @@ type application struct {
 var (
 	app  *application
 	port string
+	r *gin.Engine
 )
 
 func init() {
@@ -53,13 +53,9 @@ func init() {
 func Run() {
 	defer app.DB.Close()
 
-	r := gin.Default()
+	r = gin.Default()
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"ok": "Hello World",
-		})
-	})
+	registerRoutes()
 
 	LogInfo("Listening on Port : ", port)
 	log.Fatalln(r.Run(":" + port))
