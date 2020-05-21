@@ -40,9 +40,9 @@ func LogInfo(v ...interface{}) {
 }
 
 func LogWarning(v ...interface{}) {
-	log.Println("Warning : ", v)
+	log.Println("WARNING : ", v)
 }
 
 func LogError(v ...interface{}) {
-	log.Println("Error : ", v)
+	log.Println("ERROR : ", v)
 }

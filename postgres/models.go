@@ -1,6 +1,9 @@
 package postgres
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm/dialects/postgres"
+)
 
 type Category struct{
 	gorm.Model
@@ -16,5 +19,6 @@ type Product struct{
 	Price float32 `json:"price" binding:"required" gorm:"not null"`
 	Details string `json:"details" gorm:"type:text"`
 	ImageUrl string `json:"imageUrl" binding:"required" gorm:"type:text not null"`
+	Options postgres.Jsonb
 	CategoryID uint
 }

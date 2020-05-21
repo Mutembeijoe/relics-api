@@ -45,6 +45,9 @@ func init() {
 	}
 	//AutoMigrate DB
 	AutoMigrate(app.DB)
+
+	//SEED_DB
+	SeedDB(app.DB)
 }
 
 func main() {
