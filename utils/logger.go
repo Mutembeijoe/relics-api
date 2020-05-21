@@ -35,14 +35,14 @@ func InitLogger() {
 	log.SetOutput(writer)
 }
 
-func LogInfo(v ...interface{}){
+func LogInfo(v ...interface{}) {
 	log.Println("INFO : ", v)
 }
 
-func LogWarning(v ...interface{}){
+func LogWarning(v ...interface{}) {
 	log.Println("Warning : ", v)
 }
 
-func LogError(v ...interface{}){
+func LogError(v ...interface{}) {
 	log.Println("Error : ", v)
 }
