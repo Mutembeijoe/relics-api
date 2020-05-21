@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"log"
 	"os"
 )
 
@@ -20,20 +19,19 @@ func InitDB() (*gorm.DB, error) {
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_SSL"))
 
-	fmt.Println(uri)
 	db, err := gorm.Open("postgres", uri)
 
 	if err != nil {
-		log.Println("Connection to db failed")
+		LogError("Connection to db failed")
 		return nil, err
 	}
 
 	if err = db.DB().Ping(); err != nil {
-		log.Println("Failed to Ping DB")
+		LogWarning("Failed to Ping DB")
 		return nil, err
 	}
 
-	log.Println("Connected to DB....")
+	LogInfo("Connected to DB....")
 
 	return db, nil
 }

@@ -9,11 +9,10 @@ import (
 	"time"
 )
 
-func InitLogger(){
+func InitLogger() {
 	path := os.Getenv("LOG_FOLDER")
 
 	env := strings.ToLower(os.Getenv("APP_ENV"))
-	//appName:= os.Getenv("APP_NAME")
 
 	if env == "dev" {
 		cwd, err := os.Getwd()
@@ -23,9 +22,9 @@ func InitLogger(){
 	}
 
 	writer, err := rotatelogs.New(
-		fmt.Sprintf("%s old.UTC.%s",path,"%Y-%m-%d"),
+		fmt.Sprintf("%s old.UTC.%s", path, "%Y-%m-%d"),
 		rotatelogs.WithLinkName(path+"current"),
-		rotatelogs.WithMaxAge(time.Hour *24*7 ),
+		rotatelogs.WithMaxAge(time.Hour*24*7),
 		rotatelogs.WithRotationTime(time.Hour*24),
 	)
 
@@ -34,4 +33,16 @@ func InitLogger(){
 	}
 
 	log.SetOutput(writer)
+}
+
+func LogInfo(v ...interface{}){
+	log.Println("INFO : ", v)
+}
+
+func LogWarning(v ...interface{}){
+	log.Println("Warning : ", v)
+}
+
+func LogError(v ...interface{}){
+	log.Println("Error : ", v)
 }
