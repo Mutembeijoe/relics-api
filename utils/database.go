@@ -67,7 +67,7 @@ func SeedDB(db *gorm.DB) {
 		LogInfo("Starting to seed Categories ...")
 
 		for _, category := range categories {
-			LogInfo(fmt.Sprintf("INSERTING %s category into DB", category.CategoryName))
+			LogInfo(fmt.Sprintf("Inserting %s category into DB", category.CategoryName))
 			err := db.Create(&category).Error
 
 			if err != nil {
@@ -81,7 +81,7 @@ func SeedDB(db *gorm.DB) {
 		products := []postgres_db.Product{
 			{
 				ProductName: "Girl Power Hoodie Black",
-				ProductSlug: "girl-power-hoodie -black",
+				ProductSlug: GenerateSlug("Girl Power Hoodie Black"),
 				Price:       1150,
 				Description: "Girl Power Hoodie with Rosie the Riveter Poster, Color Black",
 				ImageUrl:    "https://res.cloudinary.com/myloxyloto/image/upload/v1589988178/smartshop/Highcompressed_1416322864_h6xxmh.png",
@@ -89,7 +89,7 @@ func SeedDB(db *gorm.DB) {
 			},
 			{
 				ProductName: "Star Wars Valentines T-shirt",
-				ProductSlug: "star-wars-valentines-t-shirt",
+				ProductSlug: GenerateSlug("Star Wars Valentines T-shirt"),
 				Price:       650,
 				Description: "Darth Vader Star Wars Valentine Red T-shirt",
 				ImageUrl:    "https://res.cloudinary.com/myloxyloto/image/upload/v1589988198/smartshop/Highcompressed_2114311319_nm4amj.png",
@@ -98,7 +98,7 @@ func SeedDB(db *gorm.DB) {
 		}
 		LogInfo("Starting to seed products...")
 		for index, product := range products {
-			LogInfo(fmt.Sprintf("Insering product %d into db", index+1))
+			LogInfo(fmt.Sprintf("Inserting product %d into db", index+1))
 			err := db.Create(&product).Error
 			if err != nil {
 				LogError(fmt.Sprintf("Failed to Insert product %d into db", index+1))
