@@ -9,7 +9,7 @@ type Category struct {
 	gorm.Model
 	CategoryName string `json:"category_name" binding:"required" gorm:"type:varchar(50)"`
 	CategorySlug string `json:"category_slug" gorm:"not null"`
-	Products     []Product
+	//Products     []Product
 }
 
 type Product struct {
@@ -20,5 +20,6 @@ type Product struct {
 	Details     string  `json:"details" gorm:"type:text"`
 	ImageUrl    string  `json:"imageUrl" binding:"required" gorm:"type:text not null"`
 	Options     postgres.Jsonb
-	CategoryID  uint
+	Category    Category `json:"category"`
+	CategoryID  uint     `json:"-"`
 }
