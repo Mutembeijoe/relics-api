@@ -102,8 +102,15 @@ func (app *Application) AddProduct(c *gin.Context) {
 	product.CategoryID = pj.CategoryID
 	product.ImageUrl = pj.ImageUrl
 
-	if err := app.DB.Create(&product).Error; err != nil {
+	if err := app.DB.Create(&product).Set("gorm:auto_preload", true).Error; err != nil {
 		LogError("Failed to Insert Product into DB : ", err.Error())
+		if gorm.IsRecordNotFoundError(err){
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":"Invalid CategoryID",
+			})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": " 500 - Internal Server Error",
 		})

@@ -22,3 +22,21 @@ type Product struct {
 	Category    Category `json:"category"`
 	CategoryID  uint     `json:"-"`
 }
+
+//Verify Existence of Category Before saving Product
+func (p *Product) BeforeSave(db *gorm.DB) (err error) {
+	var c Category
+	c.ID = p.CategoryID
+	if err = db.First(&c).Error; gorm.IsRecordNotFoundError(err){
+		return err
+	}
+	return
+}
+
+// Preload Category After Creating Product
+func (p *Product) AfterCreate(db *gorm.DB) (err error) {
+	var c Category
+	db.First(&c, p.CategoryID)
+	p.Category = c
+	return
+}
