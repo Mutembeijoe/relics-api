@@ -2,19 +2,17 @@ package cmd
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	//"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
+	. "github.com/mutembeijoe/smartshop_api/api"
 	. "github.com/mutembeijoe/smartshop_api/utils"
 	"log"
 	"os"
 )
 
-type application struct {
-	DB *gorm.DB
-}
 
 var (
-	app  *application
+	app  *Application
 	port string
 	r *gin.Engine
 )
@@ -38,7 +36,7 @@ func init() {
 	LogInfo("Contacting DB...")
 	db, err := InitDB()
 
-	app = &application{DB: db}
+	app = &Application{DB: db}
 
 	if err != nil {
 		log.Fatalln("Failed to Initiated db", err.Error())
