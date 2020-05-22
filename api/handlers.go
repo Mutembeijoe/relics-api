@@ -60,7 +60,7 @@ func (app *Application)AddCategory(c *gin.Context){
 	}
 
 	category.CategoryName = cj.Name
-	category.CategorySlug = "dummy-slug"
+	category.CategorySlug = GenerateSlug(cj.Name)
 
 
 	if err= app.DB.Create(&category).Error; err!=nil{
@@ -79,6 +79,6 @@ func (app *Application)AddCategory(c *gin.Context){
 
 //func (app *Application)AddProduct(c *gin.Context){
 //	LogInfo("Attempting to Insert Product into DB")
-//	//c.ShouldBindJSON()
+//
 //
 //}
