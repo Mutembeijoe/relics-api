@@ -6,6 +6,7 @@ func registerRoutes() {
 	v1 := r.Group("/products")
 	{
 		v1.GET("/", app.GetProducts)
+		v1.POST("/add", app.AddProduct)
 	}
 	//
 	// Category Group

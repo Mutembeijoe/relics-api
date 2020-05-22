@@ -41,7 +41,13 @@ func InitDB() (*gorm.DB, error) {
 
 func AutoMigrate(db *gorm.DB) {
 	LogInfo("Running Auto Migration to create DATABASE TABLES")
-	db.AutoMigrate(&postgres_db.Category{}, &postgres_db.Product{})
+	if err := db.AutoMigrate(&postgres_db.Category{}, &postgres_db.Product{}).Error; err != nil {
+		LogError(err.Error())
+		LogError("Failed to successfully Auto migrate all Tables...")
+
+		return
+	}
+
 	LogInfo("Finished Running Auto Migration")
 }
 
@@ -51,11 +57,11 @@ func SeedDB(db *gorm.DB) {
 		categories := []postgres_db.Category{
 			{
 				CategoryName: "T-shirts",
-				CategorySlug: "t-shirts",
+				Options:      postgres.Jsonb{RawMessage: json.RawMessage(`{"sizes": "['xl', 'lg', 'md', 'sm']"}`)},
 			},
 			{
 				CategoryName: "Hoodies",
-				CategorySlug: "hoodies",
+				Options:      postgres.Jsonb{RawMessage: json.RawMessage(`{"sizes": "['xl', 'lg', 'md', 'sm']"}`)},
 			},
 		}
 		LogInfo("Starting to seed Categories ...")
@@ -65,7 +71,7 @@ func SeedDB(db *gorm.DB) {
 			err := db.Create(&category).Error
 
 			if err != nil {
-				LogError(fmt.Sprintf("Failed to insert %s category into DB", category.CategoryName))
+				LogError(fmt.Sprintf("Failed to insert %s category into DB : %s", category.CategoryName, err.Error()))
 				return
 			}
 		}
@@ -77,19 +83,17 @@ func SeedDB(db *gorm.DB) {
 				ProductName: "Girl Power Hoodie Black",
 				ProductSlug: "girl-power-hoodie -black",
 				Price:       1150,
-				Details:     "Girl Power Hoodie with Rosie the Riveter Poster, Color Black",
+				Description: "Girl Power Hoodie with Rosie the Riveter Poster, Color Black",
 				ImageUrl:    "https://res.cloudinary.com/myloxyloto/image/upload/v1589988178/smartshop/Highcompressed_1416322864_h6xxmh.png",
 				CategoryID:  2,
-				Options:     postgres.Jsonb{RawMessage: json.RawMessage(`{"sizes": "['xl, 'lg', 'md', 'sm']"}`)},
 			},
 			{
 				ProductName: "Star Wars Valentines T-shirt",
 				ProductSlug: "star-wars-valentines-t-shirt",
 				Price:       650,
-				Details:     "Darth Vader Star Wars Valentine Red T-shirt",
+				Description: "Darth Vader Star Wars Valentine Red T-shirt",
 				ImageUrl:    "https://res.cloudinary.com/myloxyloto/image/upload/v1589988198/smartshop/Highcompressed_2114311319_nm4amj.png",
 				CategoryID:  1,
-				Options:     postgres.Jsonb{RawMessage: json.RawMessage(`{"sizes": "['xl', 'lg', 'md', 'sm']"}`)},
 			},
 		}
 		LogInfo("Starting to seed products...")
