@@ -7,7 +7,7 @@ import (
 
 type Category struct {
 	gorm.Model
-	CategoryName string `json:"category_name" binding:"required" gorm:"type:varchar(50)"`
+	CategoryName string `json:"category_name" gorm:"type:varchar(50)"`
 	CategorySlug string `json:"category_slug" gorm:"not null"`
 	//Products     []Product
 }

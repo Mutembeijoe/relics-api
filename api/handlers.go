@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/mutembeijoe/smartshop_api/postgres"
@@ -19,9 +18,9 @@ func (app *Application) GetProducts(c *gin.Context) {
 	var products []postgres.Product
 
 	if err := app.DB.Set("gorm:auto_preload", true).Find(&products).Error; err != nil {
-		LogError("Failed to Fetch products")
+		LogError(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("Failed to fetch products : %s", err.Error()),
+			"error": "Failed to fetch Products",
 		})
 		return
 	}
@@ -37,13 +36,44 @@ func (app *Application) GetCategories(c *gin.Context) {
 	if err := app.DB.Find(&categories).Error; err != nil {
 		LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"data": categories,
+	})
+}
+
+func (app *Application)AddCategory(c *gin.Context){
+	LogInfo("Attempting to Insert Category into DB...")
+	var cj categoryJson
+	var category postgres.Category
+	err:= c.ShouldBindJSON(&cj)
+	if err!=nil{
+		LogError(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":err.Error(),
+		})
+		return
+	}
+
+	category.CategoryName = cj.Name
+	category.CategorySlug = "dummy-slug"
+
+
+	if err= app.DB.Create(&category).Error; err!=nil{
+		LogError(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"payload":category,
+		"success":"OK",
 	})
 }
 

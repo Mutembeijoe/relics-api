@@ -12,5 +12,6 @@ func registerRoutes() {
 	v2 := r.Group("/categories")
 	{
 		v2.GET("/", app.GetCategories)
+		v2.POST("/add", app.AddCategory)
 	}
 }
