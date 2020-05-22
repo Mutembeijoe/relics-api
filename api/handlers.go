@@ -1,13 +1,13 @@
 package api
 
 import (
-	//"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/gorm/dialects/postgres"
 	pg "github.com/mutembeijoe/smartshop_api/postgres"
 	. "github.com/mutembeijoe/smartshop_api/utils"
 	"net/http"
+	"strconv"
 )
 
 type Application struct {
@@ -29,6 +29,8 @@ func (app *Application) GetProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"products": products,
 	})
+
+	LogInfo("Successfully Fetched Products")
 }
 
 func (app *Application) GetCategories(c *gin.Context) {
@@ -48,48 +50,47 @@ func (app *Application) GetCategories(c *gin.Context) {
 	})
 }
 
-func (app *Application)AddCategory(c *gin.Context){
+func (app *Application) AddCategory(c *gin.Context) {
 	LogInfo("Attempting to Insert Category into DB...")
 	var cj categoryJson
 	var category pg.Category
-	err:= c.ShouldBindJSON(&cj)
-	if err!=nil{
+	err := c.ShouldBindJSON(&cj)
+	if err != nil {
 		LogError(err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 
 	category.CategoryName = cj.Name
 	category.CategorySlug = GenerateSlug(cj.Name)
-	category.Options = postgres.Jsonb{RawMessage:cj.Options}
+	category.Options = postgres.Jsonb{RawMessage: cj.Options}
 
-
-	if err= app.DB.Create(&category).Error; err!=nil{
+	if err = app.DB.Create(&category).Error; err != nil {
 		LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"500 - Internal Server Error",
+			"error": "500 - Internal Server Error",
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"payload":category,
-		"success":"OK",
+		"payload": category,
+		"success": "OK",
 	})
 
 	LogInfo("Category Insert Successful")
 }
 
-func (app *Application)AddProduct(c *gin.Context){
+func (app *Application) AddProduct(c *gin.Context) {
 	LogInfo("Attempting to Insert Product into DB")
 	var pj productJson
 	var product pg.Product
 
-	if err := c.ShouldBindJSON(&pj); err!=nil{
+	if err := c.ShouldBindJSON(&pj); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
@@ -101,18 +102,48 @@ func (app *Application)AddProduct(c *gin.Context){
 	product.CategoryID = pj.CategoryID
 	product.ImageUrl = pj.ImageUrl
 
-	if err:=app.DB.Create(&product).Error; err!=nil{
-		LogError("Failed to Insert Product into DB : ",err.Error())
+	if err := app.DB.Create(&product).Error; err != nil {
+		LogError("Failed to Insert Product into DB : ", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":" 500 - Internal Server Error",
+			"error": " 500 - Internal Server Error",
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"payload":product,
-		"success":"OK",
+		"payload": product,
+		"success": "OK",
 	})
 
 	LogInfo("Product Insert Successful")
+}
+
+func (app *Application) GetProductByID(c *gin.Context) {
+	LogInfo("Fetching a product by ID...")
+	paramId := c.Param("id")
+	var product pg.Product
+
+	id, err := strconv.Atoi(paramId)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid ID",
+		})
+		return
+	}
+
+	if err = app.DB.First(&product, id).Error; err != nil {
+		LogInfo(err.Error())
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "404 - Not Found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"payload": product,
+		"success": "OK",
+	})
+
+	LogInfo("Successfully Fetched product")
 }
